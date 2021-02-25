@@ -74,6 +74,7 @@ jobs:
       env:
         TF_ACC: "1"
         TF_ACC_TERRAFORM_VERSION: ${{ matrix.terraform }}
+        AWS_DEFAULT_REGION: "us-east-1"
 
         # Set whatever additional acceptance test env vars here. You can
         # optionally use data from your repository secrets using the
