@@ -1,3 +1,3 @@
-provider "scaffolding" {
+provider "bref" {
   # example configuration here
 }
