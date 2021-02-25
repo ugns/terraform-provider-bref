@@ -26,12 +26,30 @@ func init() {
 func New(version string) func() *schema.Provider {
 	return func() *schema.Provider {
 		p := &schema.Provider{
+			Schema: map[string]*schema.Schema{
+				"region": {
+					Type:     schema.TypeString,
+					Required: true,
+					DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+						"AWS_REGION",
+						"AWS_DEFAULT_REGION",
+					}, nil),
+					Description: "AWS Region of Bref PHP runtime layers. Can be specified with the `AWS_REGION` " +
+						"or `AWS_DEFAULT_REGION` environment variable.",
+					InputDefault: "us-east-1",
+				},
+				"bref_version": {
+					Type:        schema.TypeString,
+					Required:    true,
+					DefaultFunc: schema.EnvDefaultFunc("BREF_VERSION", "1.2.0"),
+					Description: "The Bref PHP runtime version to work with. Can be specified with the " +
+						"`BREF_VERSION` environment variable.",
+				},
+			},
 			DataSourcesMap: map[string]*schema.Resource{
-				"scaffolding_data_source": dataSourceScaffolding(),
+				"bref_lambda_layer": dataSourceLambdaLayer(),
 			},
-			ResourcesMap: map[string]*schema.Resource{
-				"scaffolding_resource": resourceScaffolding(),
-			},
+			ResourcesMap: map[string]*schema.Resource{},
 		}
 
 		p.ConfigureContextFunc = configure(version, p)
@@ -41,17 +59,19 @@ func New(version string) func() *schema.Provider {
 }
 
 type apiClient struct {
-	// Add whatever fields, client or connection info, etc. here
-	// you would need to setup to communicate with the upstream
-	// API.
+	Region    string
+	Version   string
+	AccountId string
 }
 
 func configure(version string, p *schema.Provider) func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
-	return func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
-		// Setup a User-Agent for your API client (replace the provider name for yours):
-		// userAgent := p.UserAgent("terraform-provider-scaffolding", version)
-		// TODO: myClient.UserAgent = userAgent
+	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+		apiClient := apiClient{
+			Region:    d.Get("region").(string),
+			Version:   d.Get("bref_version").(string),
+			AccountId: "209497400698",
+		}
 
-		return &apiClient{}, nil
+		return &apiClient, nil
 	}
 }
