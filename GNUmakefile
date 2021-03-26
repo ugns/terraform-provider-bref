@@ -19,3 +19,8 @@ minor:
 patch:
 	git tag $$(svu patch)
 	git push --tags
+
+.PHONY: next
+next:
+	git tag $$(svu next)
+	git push --tags
