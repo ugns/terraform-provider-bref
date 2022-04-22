@@ -38,22 +38,21 @@ jobs:
           go build -v .
 
   # run acceptance tests in a matrix with Terraform core versions
-  test:
-    name: Matrix Test
+  acceptance:
+    name: Acceptance Tests (Terraform ${{ matrix.terraform-version }})
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
-        # list whatever Terraform versions here you would like to support
         terraform:
-          - '0.12.31'
-          - '0.13'
-          - '0.14'
-          - '0.15'
-          - '1.0'
-          - '1.1'
+          - '0.12.*'
+          - '0.13.*'
+          - '0.14.*'
+          - '0.15.*'
+          - '1.0.*'
+          - '1.1.*'
     steps:
     - name: Check out code into the Go module directory
       uses: actions/checkout@v3
