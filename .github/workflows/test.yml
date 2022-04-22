@@ -54,27 +54,22 @@ jobs:
           - '1.0.*'
           - '1.1.*'
     steps:
-    - name: Check out code into the Go module directory
-      uses: actions/checkout@v3
-    - id: go-version
-      run: echo "::set-output name=version::$(cat ./.go-version)"
-    - name: Set up Go
-      uses: actions/setup-go@v3
-      with:
-        go-version: ${{ steps.go-version.outputs.version }}
-    - name: Get dependencies
-      run: |
-        go mod download
-    - name: TF acceptance tests
-      timeout-minutes: 10
-      env:
-        TF_ACC: "1"
-        TF_ACC_TERRAFORM_VERSION: ${{ matrix.terraform }}
-        AWS_DEFAULT_REGION: "us-east-1"
-
-        # Set whatever additional acceptance test env vars here. You can
-        # optionally use data from your repository secrets using the
-        # following syntax:
-        # SOME_VAR: ${{ secrets.SOME_VAR }}
-      run: |
-        go test -v -cover ./internal/provider/
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v3
+      - id: go-version
+        run: echo "::set-output name=version::$(cat ./.go-version)"
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ steps.go-version.outputs.version }}
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: ${{ matrix.terraform-version }}
+          terraform_wrapper: false
+      - name: TF acceptance tests
+        timeout-minutes: 10
+        env:
+          TF_ACC: "1"
+          AWS_DEFAULT_REGION: "us-east-1"
+        run: |
+          go test -v -cover ./internal/provider/
