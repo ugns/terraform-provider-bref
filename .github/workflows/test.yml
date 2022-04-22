@@ -30,9 +30,6 @@ jobs:
         uses: actions/setup-go@v3
         with:
           go-version: ${{ steps.go-version.outputs.version }}
-      - name: Get dependencies
-        run: |
-          go mod download
       - name: Build
         run: |
           go build -v .
