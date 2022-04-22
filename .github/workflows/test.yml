@@ -39,7 +39,7 @@ jobs:
 
   # run acceptance tests in a matrix with Terraform core versions
   acceptance:
-    name: Acceptance Tests (Terraform ${{ matrix.terraform-version }})
+    name: Acceptance Tests (Terraform ${{ matrix.terraform }})
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 15
