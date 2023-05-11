@@ -27,7 +27,7 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v3
       - id: go-version
-        run: echo "::set-output name=version::$(cat ./.go-version)"
+        run: echo "version=$(cat ./.go-version)" >> $GITHUB_OUTPUT
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
@@ -55,7 +55,7 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v3
       - id: go-version
-        run: echo "::set-output name=version::$(cat ./.go-version)"
+        run: echo "version=$(cat ./.go-version)" >> $GITHUB_OUTPUT
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
