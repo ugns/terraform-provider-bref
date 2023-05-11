@@ -45,6 +45,13 @@ func New(version string) func() *schema.Provider {
 					Description: "The Bref PHP runtime version to work with. Can be specified with the " +
 						"`BREF_VERSION` environment variable.",
 				},
+				"bref_aws_account": {
+					Type:        schema.TypeString,
+					Optional:    true,
+					DefaultFunc: schema.EnvDefaultFunc("BREF_AWS_ACCOUNT", "209497400698"),
+					Description: "The Bref AWS account to pull layers from. Can be specified with the " +
+						"`BREF_AWS_ACCOUNT` environment variable.",
+				},
 			},
 			DataSourcesMap: map[string]*schema.Resource{
 				"bref_lambda_layer": dataSourceLambdaLayer(),
@@ -69,7 +76,7 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 		apiClient := apiClient{
 			Region:    d.Get("region").(string),
 			Version:   d.Get("bref_version").(string),
-			AccountId: "209497400698",
+			AccountId: d.Get("bref_aws_account").(string),
 		}
 
 		return &apiClient, nil
