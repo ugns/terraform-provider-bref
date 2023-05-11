@@ -23,16 +23,11 @@ data "bref_lambda_layer" "console" {
 
 ### Required
 
-- **layer_name** (String) The Bref PHP runtime lambda layer name.
-
-### Optional
-
-- **id** (String) The ID of this resource.
+- `layer_name` (String) The Bref PHP runtime lambda layer name.
 
 ### Read-Only
 
-- **arn** (String) The Bref PHP runtime lambda layer ARN.
-- **layer_arn** (String) The Bref PHP runtime lambda layer ARN.
-- **version** (Number) The Bref PHP runtime lambda layer version.
-
-
+- `arn` (String) The Bref PHP runtime lambda layer ARN.
+- `id` (String) The ID of this resource.
+- `layer_arn` (String) The Bref PHP runtime lambda layer ARN.
+- `version` (Number) The Bref PHP runtime lambda layer version.
