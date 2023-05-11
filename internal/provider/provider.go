@@ -14,6 +14,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
+const (
+	BREF_V2    = "534081306603"
+	BREF_V1    = "209497400698"
+	BREF_EXTRA = "403367587399"
+)
+
 func init() {
 	// Set descriptions to support markdown syntax, this will be used in document generation
 	// and the language server.
@@ -86,13 +92,13 @@ type apiClient struct {
 func brefAwsAccountId(brefVersion string) string {
 	v, err := version.NewVersion(brefVersion)
 	if err != nil {
-		return "534081306603"
+		return BREF_V2
 	}
 	v2, _ := version.NewVersion("2.0.0")
 	if v.LessThan(v2) {
-		return "209497400698"
+		return BREF_V1
 	} else {
-		return "534081306603"
+		return BREF_V2
 	}
 }
 
@@ -104,7 +110,7 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 			ExtraVersion: d.Get("bref_extra_version").(string),
 			AccountIds: map[string]string{
 				"bref_lambda_layer":       brefAwsAccountId(d.Get("bref_version").(string)),
-				"bref_extra_lambda_layer": "403367587399",
+				"bref_extra_lambda_layer": BREF_EXTRA,
 			},
 			URLs: map[string]string{
 				"bref_lambda_layer":       fmt.Sprintf("https://raw.githubusercontent.com/brefphp/bref/%s/layers.json", d.Get("bref_version").(string)),
