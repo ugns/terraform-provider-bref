@@ -33,10 +33,9 @@ func New(version string) func() *schema.Provider {
 					DefaultFunc: schema.MultiEnvDefaultFunc([]string{
 						"AWS_REGION",
 						"AWS_DEFAULT_REGION",
-					}, nil),
+					}, "us-east-1"),
 					Description: "AWS Region of Bref PHP runtime layers. Can be specified with the `AWS_REGION` " +
 						"or `AWS_DEFAULT_REGION` environment variable.",
-					InputDefault: "us-east-1",
 				},
 				"bref_version": {
 					Type:        schema.TypeString,
