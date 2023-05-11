@@ -2,11 +2,12 @@ queue_rules:
   - name: default
     merge_conditions:
       - "#approved-reviews-by>=1"
+      - "#changes-requested-reviews-by=0"
 pull_request_rules:
   - name: merge using the merge queue
     conditions:
       - base=main
-      - "#approved-reviews-by>=1"
+      - label!=work-in-progress
     actions:
       queue:
         name: default
