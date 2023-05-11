@@ -33,10 +33,9 @@ func New(version string) func() *schema.Provider {
 					DefaultFunc: schema.MultiEnvDefaultFunc([]string{
 						"AWS_REGION",
 						"AWS_DEFAULT_REGION",
-					}, nil),
+					}, "us-east-1"),
 					Description: "AWS Region of Bref PHP runtime layers. Can be specified with the `AWS_REGION` " +
 						"or `AWS_DEFAULT_REGION` environment variable.",
-					InputDefault: "us-east-1",
 				},
 				"bref_version": {
 					Type:        schema.TypeString,
@@ -44,6 +43,13 @@ func New(version string) func() *schema.Provider {
 					DefaultFunc: schema.EnvDefaultFunc("BREF_VERSION", "1.2.0"),
 					Description: "The Bref PHP runtime version to work with. Can be specified with the " +
 						"`BREF_VERSION` environment variable.",
+				},
+				"bref_aws_account": {
+					Type:        schema.TypeString,
+					Optional:    true,
+					DefaultFunc: schema.EnvDefaultFunc("BREF_AWS_ACCOUNT", "209497400698"),
+					Description: "The Bref AWS account to pull layers from. Can be specified with the " +
+						"`BREF_AWS_ACCOUNT` environment variable.",
 				},
 			},
 			DataSourcesMap: map[string]*schema.Resource{
@@ -69,7 +75,7 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 		apiClient := apiClient{
 			Region:    d.Get("region").(string),
 			Version:   d.Get("bref_version").(string),
-			AccountId: "209497400698",
+			AccountId: d.Get("bref_aws_account").(string),
 		}
 
 		return &apiClient, nil
