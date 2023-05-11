@@ -15,9 +15,11 @@ import (
 )
 
 const (
-	BREF_V2    = "534081306603"
-	BREF_V1    = "209497400698"
-	BREF_EXTRA = "403367587399"
+	BREF_V2          = "534081306603"
+	BREF_V1          = "209497400698"
+	BREF_EXTRA       = "403367587399"
+	BREF_LAYERS_URL  = "https://raw.githubusercontent.com/brefphp/bref/%s/layers.json"
+	EXTRA_LAYERS_URL = "https://raw.githubusercontent.com/brefphp/extra-php-extensions/%s/layers.json"
 )
 
 func init() {
@@ -90,10 +92,7 @@ type apiClient struct {
 }
 
 func brefAwsAccountId(brefVersion string) string {
-	v, err := version.NewVersion(brefVersion)
-	if err != nil {
-		return BREF_V2
-	}
+	v, _ := version.NewVersion(brefVersion)
 	v2, _ := version.NewVersion("2.0.0")
 	if v.LessThan(v2) {
 		return BREF_V1
@@ -113,8 +112,8 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 				"bref_extra_lambda_layer": BREF_EXTRA,
 			},
 			URLs: map[string]string{
-				"bref_lambda_layer":       fmt.Sprintf("https://raw.githubusercontent.com/brefphp/bref/%s/layers.json", d.Get("bref_version").(string)),
-				"bref_extra_lambda_layer": fmt.Sprintf("https://raw.githubusercontent.com/brefphp/extra-php-extensions/%s/layers.json", d.Get("bref_extra_version").(string)),
+				"bref_lambda_layer":       fmt.Sprintf(BREF_LAYERS_URL, d.Get("bref_version").(string)),
+				"bref_extra_lambda_layer": fmt.Sprintf(EXTRA_LAYERS_URL, d.Get("bref_extra_version").(string)),
 			},
 		}
 
