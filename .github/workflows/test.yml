@@ -62,7 +62,7 @@ jobs:
           go-version: ${{ steps.go-version.outputs.version }}
       - uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: ${{ matrix.terraform-version }}
+          terraform_version: ${{ matrix.terraform }}
           terraform_wrapper: false
       - name: TF acceptance tests
         timeout-minutes: 10
