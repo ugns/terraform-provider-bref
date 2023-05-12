@@ -9,8 +9,17 @@ import (
 	"time"
 
 	"github.com/hashicorp/go-cleanhttp"
+	"github.com/hashicorp/go-version"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+)
+
+const (
+	BREF_V2          = "534081306603"
+	BREF_V1          = "209497400698"
+	BREF_EXTRA       = "403367587399"
+	BREF_LAYERS_URL  = "https://raw.githubusercontent.com/brefphp/bref/%s/layers.json"
+	EXTRA_LAYERS_URL = "https://raw.githubusercontent.com/brefphp/extra-php-extensions/%s/layers.json"
 )
 
 func init() {
@@ -60,14 +69,6 @@ func New(version string) func() *schema.Provider {
 						"`BREF_EXTRA_VERSION` environment variable.",
 					InputDefault: "1.1.1",
 				},
-				"bref_aws_account": {
-					Type:        schema.TypeString,
-					Optional:    true,
-					DefaultFunc: schema.EnvDefaultFunc("BREF_AWS_ACCOUNT", "534081306603"),
-					Description: "The Bref AWS account to pull layers from. Can be specified with the " +
-						"`BREF_AWS_ACCOUNT` environment variable.",
-					InputDefault: "534081306603",
-				},
 			},
 			DataSourcesMap: map[string]*schema.Resource{
 				"bref_lambda_layer":       dataSourceLambdaLayer(),
@@ -90,6 +91,16 @@ type apiClient struct {
 	URLs         map[string]string
 }
 
+func brefAwsAccountId(brefVersion string) string {
+	v, _ := version.NewVersion(brefVersion)
+	v2, _ := version.NewVersion("2.0.0")
+	if v.LessThan(v2) {
+		return BREF_V1
+	} else {
+		return BREF_V2
+	}
+}
+
 func configure(version string, p *schema.Provider) func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 		apiClient := apiClient{
@@ -97,12 +108,12 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 			Version:      d.Get("bref_version").(string),
 			ExtraVersion: d.Get("bref_extra_version").(string),
 			AccountIds: map[string]string{
-				"bref_lambda_layer":       d.Get("bref_aws_account").(string),
-				"bref_extra_lambda_layer": "403367587399",
+				"bref_lambda_layer":       brefAwsAccountId(d.Get("bref_version").(string)),
+				"bref_extra_lambda_layer": BREF_EXTRA,
 			},
 			URLs: map[string]string{
-				"bref_lambda_layer":       fmt.Sprintf("https://raw.githubusercontent.com/brefphp/bref/%s/layers.json", d.Get("bref_version").(string)),
-				"bref_extra_lambda_layer": fmt.Sprintf("https://raw.githubusercontent.com/brefphp/extra-php-extensions/%s/layers.json", d.Get("bref_extra_version").(string)),
+				"bref_lambda_layer":       fmt.Sprintf(BREF_LAYERS_URL, d.Get("bref_version").(string)),
+				"bref_extra_lambda_layer": fmt.Sprintf(EXTRA_LAYERS_URL, d.Get("bref_extra_version").(string)),
 			},
 		}
 
