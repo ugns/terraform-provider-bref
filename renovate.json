@@ -6,6 +6,7 @@
   ],
   "assigneesFromCodeOwners": true,
   "minimumReleaseAge": "3 days",
+  "platformAutomerge": true,
   "packageRules": [
     {
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
